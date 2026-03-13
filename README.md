@@ -5,7 +5,7 @@ This repository stores and visualizes the sequence evaluation scores and Sensiti
 ## Specifications
 
 - **Automatic Labeling and Plotting** 
-  When a score file (`.txt`) is placed under `data/{species}/eval_score/`, the filename (excluding the extension) is automatically read and used as the legend label in the generated plot.
+  When a score file (`.txt`) is placed under `data/{species}/`, the filename (excluding the extension) is automatically read and used as the legend label in the generated plot.
 - **Automatic Updates (GitHub Actions)**
   Whenever a new score file is pushed to the `main` (or `master`) branch, or daily at 13:00 UTC (8:00 AM EST), a GitHub Actions workflow runs automatically. It regenerates the plot images (`{Species}_snpr.png`) for each species, and then commits and pushes the updated images back to the repository.
 
