@@ -1,0 +1,49 @@
+name: Update Plots
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  schedule:
+    # Run daily at 13:00 UTC (08:00 AM EST / 09:00 AM EDT)
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-plots:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+          
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          
+      - name: Run plot script
+        run: |
+          chmod +x plot.sh
+          ./plot.sh --interactive off
+          
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add *_snpr.png
+          
+          # Commit and push only if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-update plots from GitHub Actions"
+            git push
+          fi
