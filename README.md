@@ -2,10 +2,6 @@
 
 This repository stores and visualizes the sequence evaluation scores and Sensitivity/Precision metrics for the IntronModel project.
 
-# IntronScores
-
-This repository stores and visualizes the sequence evaluation scores and Sensitivity/Precision metrics for the IntronModel project.
-
 ## Specifications
 
 - **Automatic Labeling and Plotting** 
