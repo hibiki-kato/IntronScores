@@ -152,6 +152,65 @@ def plot_eval_scores(species: str, data_dir: str, out_png: str | None = None, in
         
     return fig
 
+def plot_eval_scores_plotly(species: str, data_dir: str):
+    """Plot sensitivity/precision points from eval text files using Plotly for interactive web displays."""
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        raise ImportError("plotly must be installed to use this interactive function.")
+
+    if not os.path.isdir(data_dir):
+        raise FileNotFoundError(f"Directory not found: {data_dir}")
+
+    files = [f for f in os.listdir(data_dir) if f.endswith(".txt")]
+    files.sort()
+    if not files:
+        raise FileNotFoundError(f"No .txt files found under: {data_dir}")
+
+    # Plotly translates Matplotlib markers a bit differently. These are approximations.
+    markers = ["circle", "square", "triangle-up", "diamond", "triangle-down", "pentagon", "star", "hexagon", "x", "cross"]
+    x_min, x_max, y_min, y_max = resolve_plot_bounds(species)
+    
+    fig = go.Figure()
+    
+    for index, filename in enumerate(files):
+        data = np.loadtxt(os.path.join(data_dir, filename), usecols=(3, 4))
+        if data.ndim == 1:
+            data = np.expand_dims(data, axis=0)
+        sensitivity = data[:, 0]
+        precision = data[:, 1]
+        label = filename[:-4]
+        
+        # We only want to show the legend for the first trace of each file if we sub-grouped,
+        # but here each file is one trace.
+        fig.add_trace(go.Scatter(
+            x=sensitivity,
+            y=precision,
+            mode='markers',
+            name=label,
+            marker=dict(
+                symbol=markers[index % len(markers)],
+                size=4
+            )
+        ))
+
+    fig.update_layout(
+        title=species,
+        xaxis_title="Sensitivity",
+        yaxis_title="Precision",
+        xaxis=dict(range=[x_min, x_max]),
+        yaxis=dict(range=[y_min, y_max], scaleanchor="x", scaleratio=1), # Make aspect equal
+        legend=dict(
+            itemsizing='constant' # Make legend markers larger if we want, currently keeps them uniform
+        ),
+        template="plotly_white",
+        width=800,
+        height=600
+    )
+    
+    # Enable toggling off specific traces by clicking the legend (this is enabled by default in plotly)
+    return fig
+
 def main():
     parser = argparse.ArgumentParser(description="Plot IntronScores evaluation results.")
     parser.add_argument("--species", required=True, help="Species name")
