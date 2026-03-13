@@ -83,9 +83,13 @@ def _validate_interactive_backend() -> None:
             "Ensure DISPLAY/XAUTHORITY are available."
         )
 
-def plot_eval_scores(species: str, data_dir: str, out_png: str, interactive: bool = False) -> None:
-    """Plot sensitivity/precision points from eval text files."""
-    if interactive:
+def plot_eval_scores(species: str, data_dir: str, out_png: str | None = None, interactive: bool = False) -> Figure | None:
+    """Plot sensitivity/precision points from eval text files.
+    
+    If out_png is None, the plot will not be saved.
+    Returns the Matplotlib Figure object.
+    """
+    if interactive and out_png is not None:
         _validate_interactive_backend()
 
     if not os.path.isdir(data_dir):
@@ -131,18 +135,22 @@ def plot_eval_scores(species: str, data_dir: str, out_png: str, interactive: boo
     
     legend = ax.legend(markerscale=7, fontsize=LEGEND_FONT_SIZE, loc="lower left")
     
-    if interactive:
+    # Enable interactive legend clicking for visibility toggling
+    if interactive or out_png is None:
         _connect_interactive_legend_toggle(fig, legend, labeled_artists)
 
-    out_parent = os.path.dirname(out_png)
-    if out_parent:
-        os.makedirs(out_parent, exist_ok=True)
+    if out_png:
+        out_parent = os.path.dirname(out_png)
+        if out_parent:
+            os.makedirs(out_parent, exist_ok=True)
+            
+        plt.savefig(out_png)
+        print(f"Saved plot to {out_png}")
         
-    plt.savefig(out_png)
-    print(f"Saved plot to {out_png}")
-    
-    if interactive:
+    if interactive and out_png is not None:
         plt.show(block=True)
+        
+    return fig
 
 def main():
     parser = argparse.ArgumentParser(description="Plot IntronScores evaluation results.")
