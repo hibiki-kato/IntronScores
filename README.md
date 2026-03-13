@@ -9,6 +9,12 @@ This repository stores and visualizes the sequence evaluation scores and Sensiti
 - **Automatic Updates (GitHub Actions)**
   Whenever a new score file is pushed to the `main` (or `master`) branch, or daily at 13:00 UTC (8:00 AM EST), a GitHub Actions workflow runs automatically. It regenerates the plot images (`{Species}_snpr.png`) for each species, and then commits and pushes the updated images back to the repository.
 
+## Google Colab / Jupyter Notebook
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hibiki-kato/IntronScores/blob/main/notebook/plot_scores.ipynb)
+
+You can easily run the plotting scripts in the cloud using Google Colab. By clicking the badge above, the notebook will open in your browser, automatically clone this repository (including the data files), and generate the plots.
+
 ## Manual Plotting & Interactive Mode
 
 If you want to manually verify the plots locally or customize the display, you can use `plot.sh`.
